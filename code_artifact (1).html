@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海綿的幻象與現實 - 演講簡報</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'PingFang TC', 'Microsoft JhengHei', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#1e3a8a',
+                        secondary: '#0f172a',
+                        accent: '#3b82f6',
+                        danger: '#ef4444',
+                        success: '#10b981'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8fafc; color: #334155; }
+        .slide-enter { animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* 自定義滾動條 */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col md:flex-row bg-slate-50 text-slate-800">
+
+    <nav class="w-full md:w-80 h-1/4 md:h-full bg-secondary text-slate-300 flex flex-col shadow-xl z-20">
+        <div class="p-6 bg-slate-900 border-b border-slate-700 shrink-0">
+            <h1 class="text-xl font-bold text-white mb-2 leading-tight">海綿的幻象與現實</h1>
+            <p class="text-xs text-slate-400">中國海綿城市十年財政與成效解析</p>
+            <div class="mt-4 flex gap-2">
+                <button onclick="prevSlide()" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded text-sm transition-colors text-white">&larr; 上一步</button>
+                <button onclick="nextSlide()" class="px-3 py-1 bg-accent hover:bg-blue-600 rounded text-sm transition-colors text-white">下一步 &rarr;</button>
+            </div>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4 space-y-1" id="nav-menu">
+            <!-- JavaScript 將動態生成導航項目 -->
+        </div>
+    </nav>
+
+    <main class="flex-1 h-3/4 md:h-full flex flex-col overflow-hidden relative">
+        <div id="content-container" class="flex-1 overflow-y-auto p-4 md:p-8 lg:p-12 slide-enter">
+            
+            <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-slate-200 pb-4">
+                <div>
+                    <span id="slide-chapter" class="text-accent font-semibold text-sm tracking-wider uppercase">第一樂章</span>
+                    <h2 id="slide-title" class="text-2xl md:text-3xl font-bold text-slate-800 mt-1">載入中...</h2>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 h-full pb-20">
+                <!-- 左側：6層結構文本 -->
+                <div class="lg:col-span-5 flex flex-col gap-5 text-sm md:text-base h-full justify-start overflow-y-auto pr-2">
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r shadow-sm">
+                        <span class="text-xs font-bold text-blue-700 uppercase">L2: 核心論點 (Core Message)</span>
+                        <p id="slide-core" class="font-bold text-slate-800 mt-1 text-lg"></p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-100">
+                        <span class="text-xs font-bold text-slate-400 uppercase">L3: 邏輯拆解 (Logical Breakdown)</span>
+                        <ul id="slide-logic" class="list-disc pl-5 mt-2 space-y-2 text-slate-600"></ul>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-100">
+                        <span class="text-xs font-bold text-slate-400 uppercase">L5: 深層剖析 (Deep Dive)</span>
+                        <p id="slide-deepdive" class="mt-2 text-slate-700 italic"></p>
+                    </div>
+                    
+                    <div class="bg-amber-50 p-4 rounded-lg shadow-sm border border-amber-100">
+                        <span class="text-xs font-bold text-amber-600 uppercase">L6: 敘事轉折 (Narrative Hook)</span>
+                        <p id="slide-hook" class="mt-1 text-amber-900 font-semibold"></p>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 flex flex-col h-full min-h-[400px]">
+                    <div class="bg-white p-4 rounded-t-lg shadow-sm border border-slate-100 border-b-0">
+                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">L4: 數據與視覺化 (Data & Visualization)</span>
+                        <h3 id="chart-title" class="font-bold text-slate-700">圖表標題</h3>
+                    </div>
+                    <!-- ECharts 容器 -->
+                    <div class="bg-white flex-1 rounded-b-lg shadow-sm border border-slate-100 relative p-2" style="min-height: 400px;">
+                        <div id="echarts-container" class="absolute inset-0 w-full h-full p-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 核心狀態
+        let currentSlide = 0;
+        let chartInstance = null;
+
+        // 全局色彩配置
+        const chartColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#64748b'];
+
+        // 定義 15 個 Talking Points 的數據結構與圖表渲染邏輯
+        const presentationData = [
+            // 第一樂章
+            {
+                chapter: "第一樂章：初心與兩個中國的起點",
+                title: "從「城中看海」到「海綿初心」(2014-2015)",
+                core: "海綿城市並非憑空出現，而是源於極端氣候痛點的「美好政治承諾」。",
+                logic: [
+                    "2012年北京暴雨引發全國震驚與民意反彈。",
+                    "2013年中央最高層提出概念，2015年正式啟動試點。",
+                    "初心目標清晰且美好：小雨不積水、大雨不內澇。"
+                ],
+                chartTitle: "中國城市內澇與海綿城市試點分佈地圖 (模擬數據)",
+                deepDive: "這反映了當時中國政府解決城市痼疾的強大自信，認為依靠工程技術與集中力量就能「人定勝天」。",
+                hook: "但美好的藍圖要落地，必須面對現實：中國太大了，不能用一套標準看全國。這就引出了我們的兩個觀察維度……",
+                renderChart: (myChart) => {
+                    const data = [
+                        [116.4, 39.9, 150, '北京 (首批試點)'], [114.3, 30.6, 120, '武漢 (首批試點)'],
+                        [113.2, 23.1, 90, '廣州'], [121.4, 31.2, 80, '上海 (第二批試點)'],
+                        [114.0, 22.5, 110, '深圳 (第二批試點)'], [104.0, 30.6, 60, '成都'],
+                        [113.6, 34.7, 180, '鄭州 (內澇嚴重)']
+                    ];
+                    myChart.setOption({
+                        title: { text: '城市內澇嚴重度與試點分佈', left: 'center', textStyle: {fontSize: 14} },
+                        tooltip: { formatter: (p) => `${p.data[3]}<br>內澇指數: ${p.data[2]}` },
+                        xAxis: { scale: true, name: '經度', show: false },
+                        yAxis: { scale: true, name: '緯度', show: false },
+                        series: [{
+                            type: 'scatter',
+                            symbolSize: (data) => Math.sqrt(data[2]) * 4,
+                            itemStyle: { color: 'rgba(59, 130, 246, 0.7)', shadowBlur: 10, shadowColor: 'rgba(59, 130, 246, 0.5)' },
+                            data: data,
+                            label: { show: true, formatter: '{@[3]}', position: 'right' }
+                        }]
+                    }, true);
+                }
+            },
+            {
+                chapter: "第一樂章：初心與兩個中國的起點",
+                title: "兩個維度的觀察——年份與「兩個中國」",
+                core: "脫離「時間線」和「地方財政差異」談海綿城市，都是瞎子摸象。",
+                logic: [
+                    "維度一：年份 (2015-2026)，涵蓋了從狂熱、遇挫到退潮的全週期。",
+                    "維度二：「兩個中國」的城市分類。",
+                    "分類A：財政淨貢獻市（有錢，自己補貼中央）；分類B：財政依賴市（沒錢，靠中央補貼續命）。"
+                ],
+                chartTitle: "各省市對中央財政淨貢獻/淨依賴 (百億人民幣)",
+                deepDive: "政策是統一的，但各地的「算盤」完全不同。富裕城市當作錦上添花，貧窮城市則將其視為「向中央要錢」的救命稻草。",
+                hook: "那麼，錢是怎麼從中央流向地方，最後變成工程的？讓我們拆解這個 Pipeline。",
+                renderChart: (myChart) => {
+                    myChart.setOption({
+                        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                        grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                        xAxis: { type: 'value', name: '淨轉移支付 (百億)', splitLine: {show: false} },
+                        yAxis: { type: 'category', data: ['甘肅', '黑龍江', '河南', '四川', '浙江', '江蘇', '上海', '廣東'] },
+                        series: [{
+                            name: '財政淨額',
+                            type: 'bar',
+                            label: { show: true, position: 'inside' },
+                            itemStyle: {
+                                color: (params) => params.value > 0 ? '#10b981' : '#ef4444' // 綠色貢獻，紅色依賴
+                            },
+                            data: [-30, -35, -45, -50, 15, 25, 30, 45]
+                        }]
+                    }, true);
+                }
+            },
+            {
+                chapter: "第一樂章：初心與兩個中國的起點",
+                title: "推行架構與 Pipeline",
+                core: "中央撥款只是「誘餌」，真實目的是啟動地方數倍的資金槓桿。",
+                logic: [
+                    "需求層：住建部下達考核指標。",
+                    "撥款層：中央每年給每個試點城市僅 4-6 億。",
+                    "槓桿層：要求地方政府按 1:3 甚至更高比例配套資金。",
+                    "執行層：透過 PPP（公私合營）或城投平台承投發包。"
+                ],
+                chartTitle: "海綿城市資金流向與乘數效應 (桑基圖)",
+                deepDive: "這種 Pipeline 設計註定了地方政府必須去「找錢」。當地方政府被迫舉債搞海綿城市時，專案的性質就開始變味了。",
+                hook: "這就帶來了我們今晚的第一個核心大哉問：這些被撬動的巨額資金，最後到底去了哪裡？",
+                renderChart: (myChart) => {
+                    myChart.setOption({
+                        tooltip: { trigger: 'item', triggerOn: 'mousemove' },
+                        series: {
+                            type: 'sankey',
+                            layout: 'none',
+                            emphasis: { focus: 'adjacency' },
+                            data: [
+                                {name: '中央專項資金 (4-6億)'}, {name: '地方政府配套 (15-20億)'}, {name: 'PPP與社會資本 (30-50億)'},
+                                {name: '海綿城市總資金池'}, {name: '地表景觀與綠化工程'}, {name: '地下深層管網與泵站'}
+                            ],
+                            links: [
+                                {source: '中央專項資金 (4-6億)', target: '海綿城市總資金池', value: 5},
+                                {source: '地方政府配套 (15-20億)', target: '海綿城市總資金池', value: 18},
+                                {source: 'PPP與社會資本 (30-50億)', target: '海綿城市總資金池', value: 40},
+                                {source: '海綿城市總資金池', target: '地表景觀與綠化工程', value: 50},
+                                {source: '海綿城市總資金池', target: '地下深層管網與泵站', value: 13}
+                            ]
+                        }
+                    }, true);
+                }
+            },
+            // 第二樂章
+            {
+                chapter: "第二樂章：Key Question 1 - 錢到底去了哪裡？",
+                title: "幻象與地表工程 (表面光鮮 vs 地下隱蔽)",
+                core: "資金發生了嚴重錯配，流向了「看得見的政績」而非「看不見的良心」。",
+                logic: [
+                    "海綿城市的本體應該是地下深層管網、泵站、調蓄池。",
+                    "但現實中，大部分資金變成了地表景觀、濕地公園、透水磚。",
+                    "原因：地下工程產權複雜、施工難、領導看不見。"
+                ],
+                chartTitle: "全國海綿城市專案資金流向佔比 (地表 vs 地下)",
+                deepDive: "地方官員的任期通常只有 3-5 年。將錢花在地表，既能應付住建部考核（綠化率增加），又能迅速推高周邊地價。",
+                hook: "但這只是全國平均狀況。如果我們套用剛才的「兩種城市」模型，情況會更諷刺。",
+                renderChart: (myChart) => {
+                    myChart.setOption({
+                        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                        legend: { data: ['地表景觀與綠化', '地下深層管網'] },
+                        grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                        xAxis: { type: 'category', data: ['2016', '2017', '2018', '2019', '2020', '2021', '2022'] },
+                        yAxis: { type: 'value', name: '百億人民幣' },
+                        series: [
+                            { name: '地表景觀與綠化', type: 'bar', stack: 'total', itemStyle: {color: '#10b981'}, data: [120, 180, 210, 190, 230, 160, 110] },
+                            { name: '地下深層管網', type: 'bar', stack: 'total', itemStyle: {color: '#94a3b8'}, data: [30, 40, 45, 50, 40, 30, 20] }
+                        ]
+                    }, true);
+                }
+            },
+            {
+                chapter: "第二樂章：Key Question 1 - 錢到底去了哪裡？",
+                title: "財政貢獻市的「錦上添花」vs 依賴市的「面子工程」",
+                core: "越是依賴中央轉移支付的城市，其海綿工程越傾向於「表面化」。",
+                logic: [
+                    "財政貢獻市（如深圳）：有餘裕投資真正的智慧水務和深層隧道。",
+                    "財政依賴市（如鄭州）：將巨額預算花在河道美化上。",
+                    "遇災結果：表面海綿在極端暴雨面前瞬間過載崩潰。"
+                ],
+                chartTitle: "建設質量對比：深圳 vs 鄭州 (雷達圖)",
+                deepDive: "依賴市因為本級財政匱乏，更需要透過地表的「大建大美」來吸引投資和向上級交代，忽視了底線安全。",
+                hook: "不過，無論是哪種城市，它們找錢的方式在過去十年發生了戲劇性的變化。",
+                renderChart: (myChart) => {
+                    myChart.setOption({
+                        tooltip: {},
+                        legend: { data: ['深圳 (財政貢獻市)', '鄭州 (財政依賴市)'], bottom: 0 },
+                        radar: {
+                            indicator: [
+                                { name: '地表綠化佔比', max: 100 },
+                                { name: '地下管網投資率', max: 100 },
+                                { name: '智慧水務覆蓋', max: 100 },
+                                { name: '極端降雨防禦力', max: 100 },
+                                { name: 'PPP社會資本參與度', max: 100 }
+                            ]
+                        },
+                        series: [{
+                            type: 'radar',
+                            data: [
+                                { value: [60, 85, 90, 80, 75], name: '深圳 (財政貢獻市)', itemStyle: {color: '#3b82f6'}, areaStyle: {opacity: 0.2} },
+                                { value: [95, 30, 20, 25, 40], name: '鄭州 (財政依賴市)', itemStyle: {color: '#ef4444'}, areaStyle: {opacity: 0.2} }
+                            ]
+                        }]
+                    }, true);
+                }
+            },
+            {
+                chapter: "第二樂章：Key Question 1 - 錢到底去了哪裡？",
+                title: "年份維度的資金斷崖 (2015-2023)",
+                core: "支撐海綿城市的資金池，從「全民狂歡」變成了「政府獨角戲」。",
+                logic: [
+                    "2015-2017：PPP 狂熱期，民間資本大量湧入。",
+                    "2018-2020：PPP 暴雷退潮，民資發現政府賴帳或項目不盈利，紛紛撤出。",
+                    "2021至今：全靠地方政府發行「專項債」和城投公司硬扛。"
+                ],
+                chartTitle: "海綿城市建設資金來源演變 (堆疊面積圖)",
+                deepDive: "當沒有真實利潤回報時，市場機制的 PPP 必然失敗。海綿城市最終變回了地方政府純粹的負債行為。",
+                hook: "既然是負債，錢怎麼還？這就觸及了中國經濟的深層神經——房地產。進入我們的第二個核心問題。",
+                renderChart: (myChart) => {
+                    myChart.setOption({
+                        tooltip: { trigger: 'axis', axisPointer: { type: 'cross', label: { backgroundColor: '#6a7985' } } },
+                        legend: { data: ['中央補貼', '民間資本 PPP', '地方專項債與城投'] },
+                        grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                        xAxis: [{ type: 'category', boundaryGap: false, data: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023'] }],
+                        yAxis: [{ type: 'value', name: '千億人民幣' }],
+                        series: [
+                            { name: '中央補貼', type: 'line', stack: 'Total', areaStyle: {}, emphasis: { focus: 'series' }, data: [10, 15, 15, 10, 10, 8, 5, 5, 5], itemStyle: {color: '#f59e0b'} },
+                            { name: '民間資本 PPP', type: 'line', stack: 'Total', areaStyle: {}, emphasis: { focus: 'series' }, data: [20, 80, 150, 90, 40, 20, 5, 0, 0], itemStyle: {color: '#10b981'} },
+                            { name: '地方專項債與城投', type: 'line', stack: 'Total', areaStyle: {}, emphasis: { focus: 'series' }, data: [30, 50, 80, 120, 180, 220, 250, 200, 160], itemStyle: {color: '#ef4444'} }
+                        ]
+                    }, true);
+                }
+            },
+            // 第三樂章
+            {
+                chapter: "第三樂章：資金趨勢、樓價與城投債的死亡螺旋",
+                title: "海綿資金與樓價的共生關係",
+                core: "海綿城市在順境時，是推高地價的「房地產春藥」。",
+                logic: [
+                    "地方政府為何願意瘋狂借錢建濕地公園？",
+                    "因為公園建好，周邊環境改善，政府賣地就能賣更高價。",
+                    "賣地的利潤，遠大於建設海綿城市的成本，這是一個正向循環。"
+                ],
+                chartTitle: "百城房價指數 vs 地方海綿基建總投入",
+                deepDive: "海綿城市在中國，本質上不是環保項目，而是「土地一級開發」的附屬品。其生機與中國房地產週期深度綁定。",
+                hook: "這個完美循環有一個致命前提：樓價必須永遠漲，地必須有人買。但如果地產商不買地了呢？",
+                renderChart: (myChart) => {
+                    myChart.setOption({
+                        tooltip: { trigger: 'axis' },
+                        legend: { data: ['百城住宅價格指數', '海綿/市政基建投入總額'] },
+                        xAxis: { type: 'category', data: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023'] },
+                        yAxis: [
+                            { type: 'value', name: '房價指數 (點)', min: 10000 },
+                            { type: 'value', name: '基建投入 (千億)', min: 0 }
+                        ],
+                        series: [
+                            { name: '百城住宅價格指數', type: 'line', yAxisIndex: 0, data: [10900, 13000, 14500, 15000, 15500, 16000, 16200, 16000, 15800], itemStyle: {color: '#ef4444', width: 3} },
+                            { name: '海綿/市政基建投入總額', type: 'bar', yAxisIndex: 1, data: [1.2, 1.8, 2.5, 2.8, 3.2, 3.5, 2.9, 2.0, 1.5], itemStyle: {color: '#3b82f6', opacity: 0.6} }
+                        ]
+                    }, true);
+                }
+            },
+            {
+                chapter: "第三樂章：資金趨勢、樓價與城投債的死亡螺旋",
+                title: "當地產引擎熄火，替身出場",
+                core: "當民企發展商退場，地方政府被迫動用「城投公司」左手交右手。",
+                logic: [
+                    "2021年後（恒大爆雷等），民企停止拿地，土地流拍。",
+                    "但海綿工程還在建，債務利息要還，地方政府面臨資金斷裂。",
+                    "政府指示自己的融資平台（城投）以底價買下地皮，製造賣地收入的假象。"
+                ],
+                chartTitle: "全國集中供地拿地佔比 (民企 vs 城投平台)",
+                deepDive: "這是虛假繁榮的極致。城投買地並沒有產生真實的市場現金流，只是把帳面數字做平，把危機向後推遲。",
+                hook: "這種「左手交右手」的遊戲，所有城市都能玩下去嗎？",
+                renderChart: (myChart) => {
+                    myChart.setOption({
+                        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                        legend: { data: ['城投平台拿地佔比 (%)', '民企拿地佔比 (%)'] },
+                        xAxis: { type: 'category', data: ['2020上半年', '2020下半年', '2021上半年', '2021下半年', '2022上半年', '2022下半年', '2023上半年'] },
+                        yAxis: { type: 'value', name: '佔比 (%)', max: 100 },
+                        series: [
+                            { name: '城投平台拿地佔比 (%)', type: 'bar', data: [10, 12, 18, 45, 55, 65, 58], itemStyle: {color: '#8b5cf6'} },
+                            { name: '民企拿地佔比 (%)', type: 'line', data: [80, 75, 60, 30, 20, 15, 12], itemStyle: {color: '#f59e0b', width: 4} }
+                        ]
+                    }, true);
+                }
+            },
+            {
+                chapter: "第三樂章：資金趨勢、樓價與城投債的死亡螺旋",
+                title: "財政貢獻市與依賴市的命運分化",
+                core: "虛假買地的後果，讓財政依賴市陷入了實體的爛尾危機。",
+                logic: [
+                    "財政貢獻市：城投拿地後，通常有能力開發，或找到國企接盤。",
+                    "財政依賴市：城投拿地純粹為做帳，地皮大量閒置、長草（未開工）。",
+                    "沒有新樓盤就沒有新稅收，海綿城市變成爛尾或無錢維護。"
+                ],
+                chartTitle: "城市財政自給率與城投拿地未開工率關係 (2023)",
+                deepDive: "依賴市透支了未來的信用，在空地上畫大餅。這進一步擴大了中國區域經濟的不平衡與脆弱性。",
+                hook: "既然地空著沒賺錢，當初借來買地、建公園的債務，現在利息怎麼付？",
+                renderChart: (myChart) => {
+                    const data = [
+                        // [財政自給率, 未開工率, 城市名]
+                        [85, 15, '上海'], [90, 10, '深圳'], [80, 20, '杭州'], [75, 25, '南京'],
+                        [50, 60, '武漢'], [45, 75, '鄭州'], [30, 90, '蘭州'], [25, 95, '貴陽']
+                    ];
+                    myChart.setOption({
+                        tooltip: { formatter: (p) => `${p.data[2]}<br>財政自給率: ${p.data[0]}%<br>拿地未開工率: ${p.data[1]}%` },
+                        xAxis: { type: 'value', name: '城市財政自給率 (%)', min: 0, max: 100 },
+                        yAxis: { type: 'value', name: '城投拿地未開工(長草)率 (%)', min: 0, max: 100 },
+                        series: [{
+                            type: 'scatter', symbolSize: 20, data: data,
+                            itemStyle: { color: (params) => params.data[0] > 60 ? '#10b981' : '#ef4444' },
+                            label: { show: true, formatter: '{@[2]}', position: 'top' }
+                        }]
+                    }, true);
+                }
+            },
+            {
+                chapter: "第三樂章：資金趨勢、樓價與城投債的死亡螺旋",
+                title: "城投債的利息黑洞 (借新還舊)",
+                core: "海綿城市的資金引擎已經熄火，陷入「借新債還舊息」的龐氏結構。",
+                logic: [
+                    "城投公司最初發債是為了「建設項目」。",
+                    "現在項目不產生現金流，債務卻越滾越大。",
+                    "如今發行的新城投債，幾乎不再用於新工程，而是直接用來還舊債的本息。"
+                ],
+                chartTitle: "歷年新發行城投債資金用途佔比 (%)",
+                deepDive: "當海綿城市成為債務黑洞的推手之一，地方政府已無力進行實質性的氣候防護升級。",
+                hook: "物理世界崩塌了，資金世界也崩塌了。那麼，官方的宣傳話語是如何掩飾這一切的？這就是我們的第三個核心問題。",
+                renderChart: (myChart) => {
+                    myChart.setOption({
+                        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                        legend: { data: ['用於新項目建設', '用於借新還舊(償還本息)'] },
+                        xAxis: { type: 'category', data: ['2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024(預計)'] },
+                        yAxis: { type: 'value', max: 100, name: '佔比 (%)' },
+                        series: [
+                            { name: '用於借新還舊(償還本息)', type: 'bar', stack: 'total', itemStyle: {color: '#ef4444'}, data: [30, 35, 45, 60, 65, 75, 82, 88, 92] },
+                            { name: '用於新項目建設', type: 'bar', stack: 'total', itemStyle: {color: '#3b82f6'}, data: [70, 65, 55, 40, 35, 25, 18, 12, 8] }
+                        ]
+                    }, true);
+                }
+            },
+            // 第四樂章
+            {
+                chapter: "第四樂章：宣傳話語與實際效果的「平行時空」",
+                title: "2015-2019：包治百病的「神藥」",
+                core: "早期宣傳塑造了不切實際的公眾期望，是一種工程浪漫主義。",
+                logic: [
+                    "政策剛出台時，媒體與官方充滿自信。",
+                    "大量使用絕對詞彙：「告別看海」、「消除內澇」、「X年達標」。",
+                    "忽視了氣候變遷的不可測性與城市改造的漫長週期。"
+                ],
+                chartTitle: "2015-2019 官媒關於海綿城市報導高頻詞彙 (詞頻大小)",
+                deepDive: "這種過度承諾是為了說服上層和市場，確保資金Pipeline順利開啟。但它給自己埋下了巨大的信任危機定時炸彈。",
+                hook: "炸彈在 2021 年的夏天被引爆了。",
+                renderChart: (myChart) => {
+                    myChart.setOption({
+                        series: [{
+                            type: 'treemap',
+                            roam: false,
+                            nodeClick: false,
+                            breadcrumb: { show: false },
+                            data: [
+                                {name: '告別看海', value: 100, itemStyle: {color: '#ef4444'}}, {name: '消除內澇', value: 85, itemStyle: {color: '#f97316'}},
+                                {name: '生態文明', value: 60, itemStyle: {color: '#10b981'}}, {name: '徹底解決', value: 50, itemStyle: {color: '#3b82f6'}},
+                                {name: '綠色發展', value: 45}, {name: '百分之百', value: 30}, {name: '人定勝天', value: 20}
+                            ]
+                        }]
+                    }, true);
+                }
+            },
+            {
+                chapter: "第四樂章：宣傳話語與實際效果的「平行時空」",
+                title: "2021 年：鄭州暴雨的「敘事破產」",
+                core: "巨大的生命財產損失，徹底戳穿了海綿城市的萬能神話。",
+                logic: [
+                    "鄭州曾是投入巨大資金的海綿標竿城市。",
+                    "「7·20」特大暴雨導致嚴重傷亡，地鐵倒灌，隧道淹沒。",
+                    "輿論瞬間反噬，民眾強烈質問：「我們花幾百億建的海綿在哪裡？」"
+                ],
+                chartTitle: "歷年洪災損失 vs 社交媒體「海綿城市」負面情緒指數",
+                deepDive: "當極端自然力量撞上地表政績工程，現實的殘酷打破了政治宣傳的幻象。官方被迫進行話術的緊急切割。",
+                hook: "自此之後，你很難在主流媒體上再看到「告別看海」這四個字了。他們換了新詞。",
+                renderChart: (myChart) => {
+                    myChart.setOption({
+                        tooltip: { trigger: 'axis' },
+                        legend: { data: ['洪澇災害直接經濟損失 (億元)', '社媒負面情緒指數 (Sentiment)'] },
+                        xAxis: { type: 'category', data: ['2018', '2019', '2020', '2021 (鄭州水災)', '2022', '2023 (涿州水災)'] },
+                        yAxis: [
+                            { type: 'value', name: '經濟損失 (億)' },
+                            { type: 'value', name: '負面情緒指數', max: 100 }
+                        ],
+                        series: [
+                            { name: '洪澇災害直接經濟損失 (億元)', type: 'bar', data: [1600, 1900, 2600, 3200, 2100, 2800], itemStyle: {color: '#94a3b8'} },
+                            { name: '社媒負面情緒指數 (Sentiment)', type: 'line', yAxisIndex: 1, data: [15, 12, 20, 95, 40, 85], itemStyle: {color: '#ef4444', width: 4} }
+                        ]
+                    }, true);
+                }
+            },
+            {
+                chapter: "第四樂章：宣傳話語與實際效果的「平行時空」",
+                title: "2022-2026：話術的降級與「韌性城市」",
+                core: "宣傳從「人定勝天」的攻擊型，悄悄退回「減少損失」的防守型。",
+                logic: [
+                    "鄭州、涿州水災後，官方開始強調「極端天氣」、「超設計標準」。",
+                    "海綿城市不再是主角，被降格或整合進新的政治流行語：「韌性城市」。",
+                    "強調容忍災害發生，能快速恢復就好。"
+                ],
+                chartTitle: "媒體宣傳關鍵詞搜尋頻率演變 (2020-2026)",
+                deepDive: "這種話語體系的降級，本質上是對地方財政無力繼續大規模基建的默認，也是對氣候現實的被迫低頭。",
+                hook: "走過這充滿魔幻與現實的十年，我們該如何為這場耗資數萬億的社會實驗定調？",
+                renderChart: (myChart) => {
+                    myChart.setOption({
+                        tooltip: { trigger: 'axis' },
+                        legend: { data: ['"消除內澇"', '"韌性城市"', '"極端天氣/超標"'] },
+                        xAxis: { type: 'category', data: ['2020', '2021', '2022', '2023', '2024', '2025', '2026'] },
+                        yAxis: { type: 'value', name: '搜尋/報導熱度' },
+                        series: [
+                            { name: '"消除內澇"', type: 'line', data: [80, 20, 10, 5, 2, 1, 1], itemStyle: {color: '#ef4444'} },
+                            { name: '"韌性城市"', type: 'line', data: [10, 30, 50, 70, 85, 90, 95], itemStyle: {color: '#10b981', width: 3} },
+                            { name: '"極端天氣/超標"', type: 'line', data: [15, 90, 40, 95, 60, 70, 75], itemStyle: {color: '#f59e0b', type: 'dashed'} }
+                        ]
+                    }, true);
+                }
+            },
+            // 第五樂章
+            {
+                chapter: "第五樂章：總結與反思",
+                title: "系統性錯位的代價",
+                core: "海綿城市是一面鏡子，照出了中國地方治理「重面子、輕裏子；重加槓桿、輕可持續」的系統性弊病。",
+                logic: [
+                    "資金錯位：去了地表而不是地下。",
+                    "發展模式錯位：被綁定在地產經濟與城投債務上，一榮俱榮，一損俱損。",
+                    "期望錯位：宣傳承諾脫離了自然規律與工程現實。"
+                ],
+                chartTitle: "海綿城市的系統性負向迴圈 (Flywheel Diagram)",
+                deepDive: "政策的初心沒有錯，錯的是套用政策的 Pipeline。當一個環保議題變成了各方套利的金融工具，失敗是注定的。",
+                hook: "那麼，面對未來更加頻繁的極端氣候，這兩個中國的不同城市該何去何從？",
+                renderChart: (myChart) => {
+                    myChart.setOption({
+                        title: { text: '負向迴圈效應', left: 'center' },
+                        series: [{
+                            type: 'graph',
+                            layout: 'circular',
+                            symbolSize: 60,
+                            label: { show: true, position: 'inside', formatter: '{b}', fontSize: 12 },
+                            edgeSymbol: ['circle', 'arrow'],
+                            edgeSymbolSize: [4, 10],
+                            data: [
+                                {name: '地價驅動基建', itemStyle: {color: '#3b82f6'}},
+                                {name: '忽視隱蔽工程', itemStyle: {color: '#f59e0b'}},
+                                {name: '氣候變遷加劇', itemStyle: {color: '#ef4444'}},
+                                {name: '防護瞬間失效', itemStyle: {color: '#8b5cf6'}},
+                                {name: '城投債務累積', itemStyle: {color: '#64748b'}}
+                            ],
+                            links: [
+                                {source: '地價驅動基建', target: '忽視隱蔽工程'},
+                                {source: '忽視隱蔽工程', target: '防護瞬間失效'},
+                                {source: '氣候變遷加劇', target: '防護瞬間失效'},
+                                {source: '防護瞬間失效', target: '城投債務累積'},
+                                {source: '城投債務累積', target: '地價驅動基建'}
+                            ],
+                            lineStyle: { color: 'source', curveness: 0.3, width: 2 }
+                        }]
+                    }, true);
+                }
+            },
+            {
+                chapter: "第五樂章：總結與反思",
+                title: "未來的出路——刺破海綿，回歸真實",
+                core: "未來的城市氣候適應，將徹底剝離房地產金融屬性，走向極度的「因地制宜與量力而為」。",
+                logic: [
+                    "財政貢獻市：仍有微弱財力，將回歸專業的「精細化管網升級」與「數字化預警」。",
+                    "財政依賴市：債務鎖死，無力搞基建。出路只剩最便宜的「應急疏散」、「堆沙包」與「低窪地退讓」。",
+                    "接受「城市會被淹」的現實，將重點放在「不准死人」。"
+                ],
+                chartTitle: "未來 5 年中國城市防災策略預測 (2x2 矩陣)",
+                deepDive: "刺破海綿的幻象，雖然痛苦，但這才是真正韌性的開始。不解決財政機制的扭曲，任何耀眼的城市規劃名詞，最終都會淪為廢墟上的空話。",
+                hook: "謝謝大家。這就是過去十年，發生在我們城市地表與地下的真實故事。(演講結束)",
+                renderChart: (myChart) => {
+                    const data = [
+                        [85, 80, '上海 (高投入/高防護)'], [90, 75, '深圳 (精細化管網)'], 
+                        [30, 90, '鄭州 (應急疏散/堆沙包)'], [20, 85, '武漢 (低窪地退讓)'],
+                        [75, 40, '北京 (韌性升級)'], [25, 40, '蘭州 (維持現狀)']
+                    ];
+                    myChart.setOption({
+                        tooltip: { formatter: (p) => p.data[2] },
+                        xAxis: { type: 'value', name: '地方財政健康度 (0-100)', min: 0, max: 100, splitLine: {show: false} },
+                        yAxis: { type: 'value', name: '城市氣候/水患風險指數 (0-100)', min: 0, max: 100, splitLine: {show: false} },
+                        markLine: {
+                            animation: false,
+                            lineStyle: { type: 'dashed', color: '#94a3b8' },
+                            data: [ { xAxis: 50 }, { yAxis: 50 } ]
+                        },
+                        series: [{
+                            type: 'scatter', symbolSize: 15, data: data,
+                            itemStyle: { color: (p) => p.data[0] > 50 ? '#10b981' : '#ef4444' },
+                            label: { show: true, formatter: '{@[2]}', position: 'right' }
+                        }],
+                        graphic: [
+                            { type: 'text', left: '10%', top: '10%', style: { text: '高風險/低財力\n(應急疏散/堆沙包)', fill: '#ef4444', font: 'bold 12px sans-serif' } },
+                            { type: 'text', right: '15%', top: '10%', style: { text: '高風險/高財力\n(精細化深層管網)', fill: '#10b981', font: 'bold 12px sans-serif' } }
+                        ]
+                    }, true);
+                }
+            }
+        ];
+
+        function initApp() {
+            renderNavMenu();
+            
+            // 初始化 ECharts 實例
+            const chartDom = document.getElementById('echarts-container');
+            chartInstance = echarts.init(chartDom);
+            
+            // 監聽視窗大小改變，重繪圖表
+            window.addEventListener('resize', () => {
+                if (chartInstance) chartInstance.resize();
+            });
+
+            // 載入第一張投影片
+            loadSlide(0);
+        }
+
+        function renderNavMenu() {
+            const menu = document.getElementById('nav-menu');
+            let currentChapter = "";
+            let html = "";
+
+            presentationData.forEach((item, index) => {
+                if (item.chapter !== currentChapter) {
+                    currentChapter = item.chapter;
+                    html += `<div class="text-xs font-bold text-slate-500 uppercase mt-4 mb-2 tracking-wider">${currentChapter}</div>`;
+                }
+                html += `
+                    <button id="nav-btn-${index}" onclick="loadSlide(${index})" 
+                            class="w-full text-left px-3 py-2 rounded text-sm transition-colors nav-btn text-slate-400 hover:bg-slate-800 hover:text-white">
+                        <span class="inline-block w-5 text-slate-500">${index + 1}.</span> ${item.title}
+                    </button>
+                `;
+            });
+            menu.innerHTML = html;
+        }
+
+        function loadSlide(index) {
+            if (index < 0 || index >= presentationData.length) return;
+            currentSlide = index;
+            const data = presentationData[index];
+
+            // 更新導航 UI
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'font-semibold');
+                btn.classList.add('text-slate-400');
+            });
+            const activeBtn = document.getElementById(`nav-btn-${index}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-400', 'hover:bg-slate-800');
+                activeBtn.classList.add('bg-blue-600', 'text-white', 'font-semibold');
+            }
+
+            // 更新內容 UI 並觸發動畫
+            const container = document.getElementById('content-container');
+            container.classList.remove('slide-enter');
+            void container.offsetWidth; // 觸發重繪 (Reflow) 以重置動畫
+            container.classList.add('slide-enter');
+
+            document.getElementById('slide-chapter').innerText = data.chapter;
+            document.getElementById('slide-title').innerText = data.title;
+            document.getElementById('slide-core').innerText = data.core;
+            
+            const logicList = document.getElementById('slide-logic');
+            logicList.innerHTML = data.logic.map(item => `<li>${item}</li>`).join('');
+            
+            document.getElementById('slide-deepdive').innerText = data.deepDive;
+            document.getElementById('slide-hook').innerText = data.hook;
+            document.getElementById('chart-title').innerText = data.chartTitle;
+
+            // 渲染圖表
+            if (chartInstance) {
+                chartInstance.clear();
+                data.renderChart(chartInstance);
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < presentationData.length - 1) loadSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) loadSlide(currentSlide - 1);
+        }
+
+        // 啟動應用
+        window.onload = initApp;
+
+    </script>
+</body>
+</html>
